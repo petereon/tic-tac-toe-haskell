@@ -1,0 +1,9 @@
+# This file requires `steeloverseer` to run
+- pattern: app/(.*)\.hs
+  commands:
+  - stylish-haskell -i $(find app -name '*.hs')
+  - hlint app
+- pattern: (.*)\.cabal
+  commands:
+  - "cabal-fmt *.cabal -i"
+
