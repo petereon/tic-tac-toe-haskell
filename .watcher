@@ -1,4 +1,4 @@
-# This file requires `steeloverseer` to run
+# This file requires `steeloverseer`, `stylish-haskell`, `hlint` and `cabal-fmt` in path to run
 - pattern: app/(.*)\.hs
   commands:
   - stylish-haskell -i $(find app -name '*.hs')
