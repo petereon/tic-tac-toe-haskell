@@ -1,0 +1,4 @@
+# This file requires `steeloverseer`, `stylish-haskell`, `hlint` and `cabal-fmt` in path to run
+- pattern: app/(.*)\.hs
+  commands:
+  - doctest $(find app -name '*.hs')
