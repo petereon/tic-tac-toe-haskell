@@ -1,7 +1,5 @@
 module Main where
 
-import Data.Maybe (isNothing)
-
 newtype Player = Player Int deriving (Show)
 
 data Move = Move Int Int deriving (Show)
