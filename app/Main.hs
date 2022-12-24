@@ -51,9 +51,6 @@ translateCoords (Move row column) =
 replaceAtIndex :: [a] -> Int -> a -> [a]
 replaceAtIndex xs i x = take i xs ++ [x] ++ drop (i + 1) xs
 
-isValidMove :: Board -> Int -> Bool
-isValidMove board index = isNothing (board !! index)
-
 -- | Making a move on a board as a player
 -- Examples:
 -- >>> makeMove [Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing] (Move 1 2) (Player 1)
@@ -72,9 +69,9 @@ makeMove board move (Player player_num) =
   case translateCoords move of
     Nothing -> board
     Just index ->
-      if isValidMove board index
-        then replaceAtIndex board index (Just player_num)
-        else board
+      case board !! index of
+        Just _ -> board
+        Nothing -> replaceAtIndex board index (Just player_num)
 
 -- createRandomMove :: Board -> Move
 
