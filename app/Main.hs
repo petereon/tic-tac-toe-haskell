@@ -1,5 +1,7 @@
 module Main where
 
+import Data.Maybe (isNothing)
+
 newtype Player = Player Int deriving (Show)
 
 data Move = Move Int Int deriving (Show)
@@ -42,14 +44,37 @@ translateCoords (Move row column) =
     then Nothing
     else Just ((row - 1) * 3 + (column - 1))
 
+-- | Replace an element at index in list
+-- Examples:
+-- >>> replaceAtIndex [1,2,3,4] 2 9
+-- [1,2,9,4]
 replaceAtIndex :: [a] -> Int -> a -> [a]
 replaceAtIndex xs i x = take i xs ++ [x] ++ drop (i + 1) xs
 
+isValidMove :: Board -> Int -> Bool
+isValidMove board index = isNothing (board !! index)
+
+-- | Making a move on a board as a player
+-- Examples:
+-- >>> makeMove [Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing] (Move 1 2) (Player 1)
+-- [Nothing,Just 1,Nothing,Nothing,Nothing,Nothing,Nothing,Nothing,Nothing]
+--
+-- >>> makeMove [Nothing, Just 1, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing] (Move 1 2) (Player 2)
+-- [Nothing,Just 1,Nothing,Nothing,Nothing,Nothing,Nothing,Nothing,Nothing]
+--
+-- >>> makeMove [Nothing, Just 1, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing] (Move 4 3) (Player 2)
+-- [Nothing,Just 1,Nothing,Nothing,Nothing,Nothing,Nothing,Nothing,Nothing]
+--
+-- >>> makeMove [Nothing, Just 1, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing] (Move 3 4) (Player 2)
+-- [Nothing,Just 1,Nothing,Nothing,Nothing,Nothing,Nothing,Nothing,Nothing]
 makeMove :: Board -> Move -> Player -> Board
 makeMove board move (Player player_num) =
   case translateCoords move of
     Nothing -> board
-    Just index -> replaceAtIndex board index player_num
+    Just index ->
+      if isValidMove board index
+        then replaceAtIndex board index (Just player_num)
+        else board
 
 -- createRandomMove :: Board -> Move
 
