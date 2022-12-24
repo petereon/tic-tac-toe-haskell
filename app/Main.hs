@@ -71,7 +71,8 @@ makeMove board move (Player player_num) =
         Just _ -> board
         Nothing -> replaceAtIndex board index (Just player_num)
 
--- createRandomMove :: Board -> Move
+createRandomMove :: Board -> Move
+createRandomMove _ = Move 1 1
 
 main :: IO ()
 main = do
