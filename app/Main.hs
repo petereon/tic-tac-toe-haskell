@@ -1,5 +1,9 @@
 module Main where
 
+import Data.List (elemIndices)
+
+-- import System.Random (randomRIO)
+
 newtype Player = Player Int deriving (Show)
 
 data Move = Move Int Int deriving (Show)
@@ -42,6 +46,25 @@ translateCoords (Move row column) =
     then Nothing
     else Just ((row - 1) * 3 + (column - 1))
 
+-- | Translate index to coords
+--
+-- Examples:
+-- >>> translateIndex 8
+-- Just (Move 3 3)
+--
+-- >>> translateIndex 3
+-- Just (Move 2 1)
+--
+-- >>> translateIndex 0
+-- Just (Move 1 1)
+translateIndex :: Int -> Maybe Move
+translateIndex index =
+  if index > 8
+    then Nothing
+    else do
+      let (row, col) = divMod index 3
+      Just (Move (row + 1) (col + 1))
+
 -- | Replace an element at index in list
 -- Examples:
 -- >>> replaceAtIndex [1,2,3,4] 2 9
@@ -71,8 +94,10 @@ makeMove board move (Player player_num) =
         Just _ -> board
         Nothing -> replaceAtIndex board index (Just player_num)
 
-createRandomMove :: Board -> Move
-createRandomMove _ = Move 1 1
+-- createRandomMove :: Float -> Board -> Move
+-- createRandomMove seed board = do
+--   let emptySquares = elemIndices Nothing board
+--   emptySquares !! (seed - 1 / length emptySquares - 1)
 
 main :: IO ()
 main = do
