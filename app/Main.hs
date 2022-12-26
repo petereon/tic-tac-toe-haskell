@@ -73,24 +73,22 @@ replaceAtIndex xs i x = take i xs ++ [x] ++ drop (i + 1) xs
 -- | Making a move on a board as a player
 -- Examples:
 -- >>> makeMove [Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing] (Move 1 2) (Player 'X')
--- [Nothing,Just (Player 'X'),Nothing,Nothing,Nothing,Nothing,Nothing,Nothing,Nothing]
+-- Just [Nothing,Just (Player 'X'),Nothing,Nothing,Nothing,Nothing,Nothing,Nothing,Nothing]
 --
 -- >>> makeMove [Nothing, Just (Player 'X'), Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing] (Move 1 2) (Player 'O')
--- [Nothing,Just (Player 'X'),Nothing,Nothing,Nothing,Nothing,Nothing,Nothing,Nothing]
+-- Nothing
 --
 -- >>> makeMove [Nothing, Just (Player 'X'), Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing] (Move 4 3) (Player 'O')
--- [Nothing,Just (Player 'X'),Nothing,Nothing,Nothing,Nothing,Nothing,Nothing,Nothing]
+-- Nothing
 --
 -- >>> makeMove [Nothing, Just (Player 'X'), Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing] (Move 3 4) (Player 'O')
--- [Nothing,Just (Player 'X'),Nothing,Nothing,Nothing,Nothing,Nothing,Nothing,Nothing]
-makeMove :: Board -> Move -> Player -> Board
-makeMove board move player =
-  case translateCoords move of
-    Nothing -> board
-    Just index ->
-      case board !! index of
-        Just _ -> board
-        Nothing -> replaceAtIndex board index (Just player)
+-- Nothing
+makeMove :: Board -> Move -> Player -> Maybe Board
+makeMove board move player = do
+  index <- translateCoords move
+  case board !! index of
+    Just _ -> Nothing
+    Nothing -> Just (replaceAtIndex board index (Just player))
 
 -- createRandomMove :: Float -> Board -> Move
 -- createRandomMove seed board = do
