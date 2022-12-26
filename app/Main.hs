@@ -4,11 +4,11 @@ import Data.List (elemIndices)
 
 -- import System.Random (randomRIO)
 
-newtype Player = Player Int deriving (Show)
+newtype Player = Player Char deriving (Show)
 
 data Move = Move Int Int deriving (Show)
 
-type Board = [Maybe Int]
+type Board = [Maybe Player]
 
 -- | Create an empty board
 --
@@ -21,12 +21,12 @@ createEmptyBoard = replicate 9 Nothing
 -- | Create a Player
 --
 -- Examples:
--- >>> createPlayer 1
--- Player 1
+-- >>> createPlayer 'X'
+-- Player 'X'
 --
--- >>> createPlayer 2
--- Player 2
-createPlayer :: Int -> Player
+-- >>> createPlayer 'O'
+-- Player 'O'
+createPlayer :: Char -> Player
 createPlayer = Player
 
 -- | Translate coords from points to index
@@ -41,10 +41,9 @@ createPlayer = Player
 -- >>> translateCoords (Move 3 1)
 -- Just 6
 translateCoords :: Move -> Maybe Int
-translateCoords (Move row column) =
-  if row > 3 || column > 3
-    then Nothing
-    else Just ((row - 1) * 3 + (column - 1))
+translateCoords (Move row column)
+  | row > 3 || column > 3 = Nothing
+  | otherwise = Just ((row - 1) * 3 + (column - 1))
 
 -- | Translate index to coords
 --
@@ -58,10 +57,9 @@ translateCoords (Move row column) =
 -- >>> translateIndex 0
 -- Just (Move 1 1)
 translateIndex :: Int -> Maybe Move
-translateIndex index =
-  if index > 8
-    then Nothing
-    else do
+translateIndex index
+  | index > 8 = Nothing
+  | otherwise = do
       let (row, col) = divMod index 3
       Just (Move (row + 1) (col + 1))
 
@@ -74,25 +72,25 @@ replaceAtIndex xs i x = take i xs ++ [x] ++ drop (i + 1) xs
 
 -- | Making a move on a board as a player
 -- Examples:
--- >>> makeMove [Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing] (Move 1 2) (Player 1)
--- [Nothing,Just 1,Nothing,Nothing,Nothing,Nothing,Nothing,Nothing,Nothing]
+-- >>> makeMove [Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing] (Move 1 2) (Player 'X')
+-- [Nothing,Just (Player 'X'),Nothing,Nothing,Nothing,Nothing,Nothing,Nothing,Nothing]
 --
--- >>> makeMove [Nothing, Just 1, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing] (Move 1 2) (Player 2)
--- [Nothing,Just 1,Nothing,Nothing,Nothing,Nothing,Nothing,Nothing,Nothing]
+-- >>> makeMove [Nothing, Just (Player 'X'), Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing] (Move 1 2) (Player 'O')
+-- [Nothing,Just (Player 'X'),Nothing,Nothing,Nothing,Nothing,Nothing,Nothing,Nothing]
 --
--- >>> makeMove [Nothing, Just 1, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing] (Move 4 3) (Player 2)
--- [Nothing,Just 1,Nothing,Nothing,Nothing,Nothing,Nothing,Nothing,Nothing]
+-- >>> makeMove [Nothing, Just (Player 'X'), Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing] (Move 4 3) (Player 'O')
+-- [Nothing,Just (Player 'X'),Nothing,Nothing,Nothing,Nothing,Nothing,Nothing,Nothing]
 --
--- >>> makeMove [Nothing, Just 1, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing] (Move 3 4) (Player 2)
--- [Nothing,Just 1,Nothing,Nothing,Nothing,Nothing,Nothing,Nothing,Nothing]
+-- >>> makeMove [Nothing, Just (Player 'X'), Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing] (Move 3 4) (Player 'O')
+-- [Nothing,Just (Player 'X'),Nothing,Nothing,Nothing,Nothing,Nothing,Nothing,Nothing]
 makeMove :: Board -> Move -> Player -> Board
-makeMove board move (Player player_num) =
+makeMove board move player =
   case translateCoords move of
     Nothing -> board
     Just index ->
       case board !! index of
         Just _ -> board
-        Nothing -> replaceAtIndex board index (Just player_num)
+        Nothing -> replaceAtIndex board index (Just player)
 
 -- createRandomMove :: Float -> Board -> Move
 -- createRandomMove seed board = do
