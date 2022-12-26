@@ -1,6 +1,7 @@
 module Main where
 
 import Data.List (elemIndices)
+import Data.Maybe (isNothing)
 
 -- import System.Random (randomRIO)
 
@@ -63,12 +64,17 @@ translateIndex index
       let (row, col) = divMod index 3
       Just (Move (row + 1) (col + 1))
 
--- | Replace an element at index in list
+-- | Replace an empty square with Player
 -- Examples:
--- >>> replaceAtIndex [1,2,3,4] 2 9
--- [1,2,9,4]
-replaceAtIndex :: [a] -> Int -> a -> [a]
-replaceAtIndex xs i x = take i xs ++ [x] ++ drop (i + 1) xs
+-- >>> placePlayersMark [Nothing, Just (Player 'X')] 0 (Just (Player 'O'))
+-- Just [Just (Player 'O'),Just (Player 'X')]
+--
+-- >>> placePlayersMark [Nothing, Just (Player 'X')] 1 (Just (Player 'O'))
+-- Nothing
+placePlayersMark :: Board -> Int -> Maybe Player -> Maybe Board
+placePlayersMark board index player
+  | isNothing (board !! index) = Just (take index board ++ [player] ++ drop (index + 1) board)
+  | otherwise = Nothing
 
 -- | Making a move on a board as a player
 -- Examples:
@@ -86,9 +92,7 @@ replaceAtIndex xs i x = take i xs ++ [x] ++ drop (i + 1) xs
 makeMove :: Board -> Move -> Player -> Maybe Board
 makeMove board move player = do
   index <- translateCoords move
-  case board !! index of
-    Just _ -> Nothing
-    Nothing -> Just (replaceAtIndex board index (Just player))
+  placePlayersMark board index (Just player)
 
 -- createRandomMove :: Float -> Board -> Move
 -- createRandomMove seed board = do
