@@ -102,9 +102,9 @@ makeMove board move player = do
 -- >>> horizontalGenerator [3] 3
 -- [3,4,5]
 horizontalGenerator :: [Int] -> Int -> [Int]
-horizontalGenerator prevSteps boardSize
-  | length prevSteps == boardSize = prevSteps
-  | otherwise = horizontalGenerator (prevSteps ++ [last prevSteps + 1]) boardSize
+horizontalGenerator prevSteps size
+  | length prevSteps == size = prevSteps
+  | otherwise = horizontalGenerator (prevSteps ++ [last prevSteps + 1]) size
 
 -- | Get a sequence of horizontal elements starting from some index
 --
