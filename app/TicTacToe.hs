@@ -106,6 +106,39 @@ horizontalGenerator prevSteps size
   | length prevSteps == size = prevSteps
   | otherwise = horizontalGenerator (prevSteps ++ [last prevSteps + 1]) size
 
+-- | Get a sequence of vertical elements provided array containing the first and the number of steps to take
+--
+-- Examples:
+-- >>> verticalGenerator [0] 3
+-- [0,3,6]
+--
+-- >>> verticalGenerator [3] 3
+-- [3,6,9]
+verticalGenerator :: [Int] -> Int -> [Int]
+verticalGenerator prevSteps size
+  | length prevSteps == size = prevSteps
+  | otherwise = verticalGenerator (prevSteps ++ [last prevSteps + size]) size
+
+-- | Get a sequence of diagonal elements provided array containing the first and the number of steps to take
+--
+-- Examples:
+-- >>> diagonalGenerator [0] 3
+-- [0,4,8]
+diagonalGenerator :: [Int] -> Int -> [Int]
+diagonalGenerator prevSteps size
+  | length prevSteps == size = prevSteps
+  | otherwise = diagonalGenerator (prevSteps ++ [last prevSteps + size + 1]) size
+
+-- \| Get a sequence of inverse diagonal elements provided array containing the first and the number of steps to take
+--
+-- Examples:
+-- >>> inverseDiagonalGenerator [2] 3
+-- [2,4,6]
+inverseDiagonalGenerator :: [Int] -> Int -> [Int]
+inverseDiagonalGenerator prevSteps size
+  | length prevSteps == size = prevSteps
+  | otherwise = inverseDiagonalGenerator (prevSteps ++ [last prevSteps + size - 1]) size
+
 -- | Get a sequence of horizontal elements starting from some index
 --
 -- Examples:
