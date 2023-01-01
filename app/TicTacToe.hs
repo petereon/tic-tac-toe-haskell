@@ -37,35 +37,35 @@ createPlayer = Player
 -- | Translate coords from points to index
 --
 -- Examples:
--- >>> translateCoords (Move 1 1)
+-- >>> translateCoords (Move 1 1) 3
 -- Just 0
 --
--- >>> translateCoords (Move 2 2)
+-- >>> translateCoords (Move 2 2) 3
 -- Just 4
 --
--- >>> translateCoords (Move 3 1)
+-- >>> translateCoords (Move 3 1) 3
 -- Just 6
-translateCoords :: Move -> Maybe Int
-translateCoords (Move row column)
-  | row > 3 || column > 3 = Nothing
-  | otherwise = Just ((row - 1) * 3 + (column - 1))
+translateCoords :: Move -> Int -> Maybe Int
+translateCoords (Move row column) size
+  | row > size || column > size = Nothing
+  | otherwise = Just ((row - 1) * size + (column - 1))
 
 -- | Translate index to coords
 --
 -- Examples:
--- >>> translateIndex 8
+-- >>> translateIndex 8 3
 -- Just (Move 3 3)
 --
--- >>> translateIndex 3
+-- >>> translateIndex 3 3
 -- Just (Move 2 1)
 --
--- >>> translateIndex 0
+-- >>> translateIndex 0 3
 -- Just (Move 1 1)
-translateIndex :: Int -> Maybe Move
-translateIndex index
+translateIndex :: Int -> Int -> Maybe Move
+translateIndex index size
   | index > 8 = Nothing
   | otherwise = do
-      let (row, col) = divMod index 3
+      let (row, col) = divMod index size
       Just (Move (row + 1) (col + 1))
 
 -- | Replace an empty square with Player
@@ -95,7 +95,7 @@ placePlayersMark board index player
 -- Nothing
 makeMove :: Board -> Move -> Player -> Maybe Board
 makeMove board move player = do
-  index <- translateCoords move
+  index <- translateCoords move (round (sqrt (fromIntegral (length board))))
   placePlayersMark board index (Just player)
 
 -- | Get a sequence indices provided array containing the first, number of steps to take and direction
@@ -119,6 +119,9 @@ makeMove board move player = do
 -- >>> sequenceGenerator [2] 3 InverseDiagonal
 -- [2,4,6]
 sequenceGenerator :: [Int] -> Int -> Direction -> [Int]
+sequenceGenerator prevSteps size Horizontal
+  | length prevSteps == size = prevSteps
+  | otherwise = sequenceGenerator (prevSteps ++ [last prevSteps + 1]) size Horizontal
 sequenceGenerator prevSteps size Vertical
   | length prevSteps == size = prevSteps
   | otherwise = sequenceGenerator (prevSteps ++ [last prevSteps + size]) size Vertical
@@ -128,9 +131,6 @@ sequenceGenerator prevSteps size Diagonal
 sequenceGenerator prevSteps size InverseDiagonal
   | length prevSteps == size = prevSteps
   | otherwise = sequenceGenerator (prevSteps ++ [last prevSteps + size - 1]) size InverseDiagonal
-sequenceGenerator prevSteps size Horizontal
-  | length prevSteps == size = prevSteps
-  | otherwise = sequenceGenerator (prevSteps ++ [last prevSteps + 1]) size Horizontal
 
 generateSequence :: ([Int] -> Int -> [Int]) -> Int -> Int -> [Int]
 generateSequence generator starting = generator [starting]
