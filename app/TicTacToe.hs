@@ -1,5 +1,3 @@
-{-# LANGUAGE FlexibleContexts #-}
-
 module TicTacToe where
 
 import Data.List (elemIndices)
@@ -11,7 +9,7 @@ data Direction = Vertical | Horizontal | Diagonal | InverseDiagonal
 newtype Player = Player Char deriving (Show)
 
 instance Eq Player where
-  (==) (Player x) (Player y) = x == y
+  (==) (Player x) (Player y) = (==) x y
 
 data Move = Move Int Int deriving (Show)
 
