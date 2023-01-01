@@ -1,10 +1,16 @@
+{-# LANGUAGE FlexibleContexts #-}
+
 module TicTacToe where
 
+import Data.List (elemIndices, findIndices)
 import Data.Maybe (isNothing)
 
 -- import System.Random (randomRIO)
 
 newtype Player = Player Char deriving (Show)
+
+instance Eq Player where
+  (==) (Player x) (Player y) = x == y
 
 data Move = Move Int Int deriving (Show)
 
@@ -129,7 +135,7 @@ diagonalGenerator prevSteps size
   | length prevSteps == size = prevSteps
   | otherwise = diagonalGenerator (prevSteps ++ [last prevSteps + size + 1]) size
 
--- \| Get a sequence of inverse diagonal elements provided array containing the first and the number of steps to take
+-- | Get a sequence of inverse diagonal elements provided array containing the first and the number of steps to take
 --
 -- Examples:
 -- >>> inverseDiagonalGenerator [2] 3
@@ -149,6 +155,14 @@ inverseDiagonalGenerator prevSteps size
 -- [3,4,5]
 generateSteps :: ([Int] -> Int -> [Int]) -> Int -> Int -> [Int]
 generateSteps generator starting = generator [starting]
+
+-- | Get positions of player given a board and a player that we are looking for
+--
+-- Examples:
+-- >>> getPlayerPositions [Nothing,Just (Player 'X'),Nothing,Nothing,Nothing,Nothing,Nothing,Nothing,Nothing] (Player 'X')
+-- [1]
+getPlayerPositions :: Board -> Player -> [Int]
+getPlayerPositions board player = elemIndices (Just player) board
 
 -- createRandomMove :: Float -> Board -> Move
 -- createRandomMove seed board = do
