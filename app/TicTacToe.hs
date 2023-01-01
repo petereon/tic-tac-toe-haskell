@@ -6,6 +6,7 @@ import Data.List (elemIndices)
 import Data.Maybe (isNothing)
 
 -- import System.Random (randomRIO)
+data Direction = Vertical | Horizontal | Diagonal | InverseDiagonal
 
 newtype Player = Player Char deriving (Show)
 
@@ -99,62 +100,42 @@ makeMove board move player = do
   index <- translateCoords move
   placePlayersMark board index (Just player)
 
--- | Get a sequence of horizontal elements provided array and the number of steps to take
+-- | Get a sequence indices provided array containing the first, number of steps to take and direction
 --
 -- Examples:
--- >>> horizontalGenerator [0] 3
+-- >>> sequenceGenerator [0] 3 Horizontal
 -- [0,1,2]
 --
--- >>> horizontalGenerator [3] 3
+-- >>> sequenceGenerator [3] 3 Horizontal
 -- [3,4,5]
-horizontalGenerator :: [Int] -> Int -> [Int]
-horizontalGenerator prevSteps size
-  | length prevSteps == size = prevSteps
-  | otherwise = horizontalGenerator (prevSteps ++ [last prevSteps + 1]) size
-
--- | Get a sequence of vertical elements provided array containing the first and the number of steps to take
 --
--- Examples:
--- >>> verticalGenerator [0] 3
+-- >>> sequenceGenerator [0] 3 Vertical
 -- [0,3,6]
 --
--- >>> verticalGenerator [3] 3
+-- >>> sequenceGenerator [3] 3 Vertical
 -- [3,6,9]
-verticalGenerator :: [Int] -> Int -> [Int]
-verticalGenerator prevSteps size
-  | length prevSteps == size = prevSteps
-  | otherwise = verticalGenerator (prevSteps ++ [last prevSteps + size]) size
-
--- | Get a sequence of diagonal elements provided array containing the first and the number of steps to take
 --
--- Examples:
--- >>> diagonalGenerator [0] 3
+-- >>> sequenceGenerator [0] 3 Diagonal
 -- [0,4,8]
-diagonalGenerator :: [Int] -> Int -> [Int]
-diagonalGenerator prevSteps size
-  | length prevSteps == size = prevSteps
-  | otherwise = diagonalGenerator (prevSteps ++ [last prevSteps + size + 1]) size
-
--- | Get a sequence of inverse diagonal elements provided array containing the first and the number of steps to take
 --
--- Examples:
--- >>> inverseDiagonalGenerator [2] 3
+-- >>> sequenceGenerator [2] 3 InverseDiagonal
 -- [2,4,6]
-inverseDiagonalGenerator :: [Int] -> Int -> [Int]
-inverseDiagonalGenerator prevSteps size
+sequenceGenerator :: [Int] -> Int -> Direction -> [Int]
+sequenceGenerator prevSteps size Vertical
   | length prevSteps == size = prevSteps
-  | otherwise = inverseDiagonalGenerator (prevSteps ++ [last prevSteps + size - 1]) size
+  | otherwise = sequenceGenerator (prevSteps ++ [last prevSteps + size]) size Vertical
+sequenceGenerator prevSteps size Diagonal
+  | length prevSteps == size = prevSteps
+  | otherwise = sequenceGenerator (prevSteps ++ [last prevSteps + size + 1]) size Diagonal
+sequenceGenerator prevSteps size InverseDiagonal
+  | length prevSteps == size = prevSteps
+  | otherwise = sequenceGenerator (prevSteps ++ [last prevSteps + size - 1]) size InverseDiagonal
+sequenceGenerator prevSteps size Horizontal
+  | length prevSteps == size = prevSteps
+  | otherwise = sequenceGenerator (prevSteps ++ [last prevSteps + 1]) size Horizontal
 
--- | Get a sequence of horizontal elements starting from some index
---
--- Examples:
--- >>> generateSteps horizontalGenerator 0 3
--- [0,1,2]
---
--- >>> generateSteps horizontalGenerator 3 3
--- [3,4,5]
-generateSteps :: ([Int] -> Int -> [Int]) -> Int -> Int -> [Int]
-generateSteps generator starting = generator [starting]
+generateSequence :: ([Int] -> Int -> [Int]) -> Int -> Int -> [Int]
+generateSequence generator starting = generator [starting]
 
 -- | Get positions of player given a board and a player that we are looking for
 --
