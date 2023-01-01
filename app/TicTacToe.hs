@@ -70,14 +70,14 @@ translateIndex index size
 
 -- | Replace an empty square with Player
 -- Examples:
--- >>> placePlayersMark [Nothing, Just (Player 'X')] 0 (Just (Player 'O'))
+-- >>> placePlayersMark [Nothing, Just (Player 'X')] 0 (Player 'O')
 -- Just [Just (Player 'O'),Just (Player 'X')]
 --
--- >>> placePlayersMark [Nothing, Just (Player 'X')] 1 (Just (Player 'O'))
+-- >>> placePlayersMark [Nothing, Just (Player 'X')] 1 (Player 'O')
 -- Nothing
-placePlayersMark :: Board -> Int -> Maybe Player -> Maybe Board
+placePlayersMark :: Board -> Int -> Player -> Maybe Board
 placePlayersMark board index player
-  | isNothing (board !! index) = Just (take index board ++ [player] ++ drop (index + 1) board)
+  | isNothing (board !! index) = Just (take index board ++ [Just player] ++ drop (index + 1) board)
   | otherwise = Nothing
 
 -- | Making a move on a board as a player
@@ -96,7 +96,7 @@ placePlayersMark board index player
 makeMove :: Board -> Move -> Player -> Maybe Board
 makeMove board move player = do
   index <- translateCoords move (round (sqrt (fromIntegral (length board))))
-  placePlayersMark board index (Just player)
+  placePlayersMark board index player
 
 -- | Get a sequence indices provided array containing the first, number of steps to take and direction
 --
