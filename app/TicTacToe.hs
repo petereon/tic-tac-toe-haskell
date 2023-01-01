@@ -2,7 +2,7 @@
 
 module TicTacToe where
 
-import Data.List (elemIndices, findIndices)
+import Data.List (elemIndices)
 import Data.Maybe (isNothing)
 
 -- import System.Random (randomRIO)
