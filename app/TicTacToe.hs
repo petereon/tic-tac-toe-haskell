@@ -149,8 +149,8 @@ sequenceGenerator prevSteps size InverseDiagonal
 -- 0
 -- >>> findCorners 4 3 Vertical
 -- 1
--- >>> findCorners 3 3 InverseDiagonal
--- 1
+-- >>> findCorners 6 3 InverseDiagonal
+-- 2
 findCorners :: Int -> Int -> Direction -> Int
 findCorners current size Horizontal
   | getY (translateIndex current size) == Just 1 = current
