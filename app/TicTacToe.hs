@@ -140,9 +140,6 @@ sequenceGenerator prevSteps size InverseDiagonal
   | length prevSteps == size = prevSteps
   | otherwise = sequenceGenerator (prevSteps ++ [last prevSteps + size - 1]) size InverseDiagonal
 
-generateSequence :: ([Int] -> Int -> [Int]) -> Int -> Int -> [Int]
-generateSequence generator starting = generator [starting]
-
 -- | Find a respective corner that serves as a start of specific sequence
 --
 -- Examples:
