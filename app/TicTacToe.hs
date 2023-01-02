@@ -13,6 +13,14 @@ instance Eq Player where
 
 data Move = Move Int Int deriving (Show)
 
+getX :: Maybe Move -> Maybe Int
+getX (Just (Move x _)) = Just x
+getX Nothing = Nothing
+
+getY :: Maybe Move -> Maybe Int
+getY (Just (Move _ y)) = Just y
+getY Nothing = Nothing
+
 type Board = [Maybe Player]
 
 -- | Create an empty board
@@ -134,6 +142,31 @@ sequenceGenerator prevSteps size InverseDiagonal
 
 generateSequence :: ([Int] -> Int -> [Int]) -> Int -> Int -> [Int]
 generateSequence generator starting = generator [starting]
+
+-- | Find a respective corner that serves as a start of specific sequence
+--
+-- Examples:
+-- >>> findCorners 4 3 Diagonal
+-- 0
+-- >>> findCorners 2 3 Horizontal
+-- 0
+-- >>> findCorners 4 3 Vertical
+-- 1
+-- >>> findCorners 3 3 InverseDiagonal
+-- 1
+findCorners :: Int -> Int -> Direction -> Int
+findCorners current size Horizontal
+  | getY (translateIndex current size) == Just 1 = current
+  | otherwise = findCorners (current - 1) size Horizontal
+findCorners current size Vertical
+  | getX (translateIndex current size) == Just 1 = current
+  | otherwise = findCorners (current - size) size Vertical
+findCorners current size Diagonal
+  | getX (translateIndex current size) == Just 1 || getY (translateIndex current size) == Just 1 = current
+  | otherwise = findCorners (current - size - 1) size Diagonal
+findCorners current size InverseDiagonal
+  | getY (translateIndex current size) == Just 3 || getX (translateIndex current size) == Just 1 = current
+  | otherwise = findCorners (current - size + 1) size InverseDiagonal
 
 -- | Get positions of player given a board and a player that we are looking for
 --
