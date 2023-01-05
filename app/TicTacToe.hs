@@ -143,27 +143,27 @@ sequenceGenerator prevSteps size InverseDiagonal
 -- | Find a respective corner that serves as a start of specific sequence
 --
 -- Examples:
--- >>> findCorners 4 3 Diagonal
+-- >>> findCorner 4 3 Diagonal
 -- 0
--- >>> findCorners 2 3 Horizontal
+-- >>> findCorner 2 3 Horizontal
 -- 0
--- >>> findCorners 4 3 Vertical
+-- >>> findCorner 4 3 Vertical
 -- 1
--- >>> findCorners 6 3 InverseDiagonal
+-- >>> findCorner 6 3 InverseDiagonal
 -- 2
-findCorners :: Int -> Int -> Direction -> Int
-findCorners current size Horizontal
+findCorner :: Int -> Int -> Direction -> Int
+findCorner current size Horizontal
   | getY (translateIndex current size) == Just 1 = current
-  | otherwise = findCorners (current - 1) size Horizontal
-findCorners current size Vertical
+  | otherwise = findCorner (current - 1) size Horizontal
+findCorner current size Vertical
   | getX (translateIndex current size) == Just 1 = current
-  | otherwise = findCorners (current - size) size Vertical
-findCorners current size Diagonal
+  | otherwise = findCorner (current - size) size Vertical
+findCorner current size Diagonal
   | getX (translateIndex current size) == Just 1 || getY (translateIndex current size) == Just 1 = current
-  | otherwise = findCorners (current - size - 1) size Diagonal
-findCorners current size InverseDiagonal
+  | otherwise = findCorner (current - size - 1) size Diagonal
+findCorner current size InverseDiagonal
   | getY (translateIndex current size) == Just 3 || getX (translateIndex current size) == Just 1 = current
-  | otherwise = findCorners (current - size + 1) size InverseDiagonal
+  | otherwise = findCorner (current - size + 1) size InverseDiagonal
 
 -- | Get positions of player given a board and a player that we are looking for
 --
@@ -172,6 +172,19 @@ findCorners current size InverseDiagonal
 -- [1]
 getPlayerPositions :: Board -> Player -> [Int]
 getPlayerPositions board player = elemIndices (Just player) board
+
+-- | Checks if all the elements of one list are contained in another
+--
+-- Examples:
+-- >>> elementsAreContainedIn [1,2,4] [1,2]
+-- False
+-- >>> elementsAreContainedIn [1,5] [1,5,8]
+-- True
+elementsAreContainedIn :: [Int] -> [Int] -> Bool
+elementsAreContainedIn [] _ = True
+elementsAreContainedIn sub list
+  | head sub `elem` list = elementsAreContainedIn (tail sub) list
+  | otherwise = False
 
 -- createRandomMove :: Float -> Board -> Move
 -- createRandomMove seed board = do
