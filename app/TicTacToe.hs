@@ -26,10 +26,18 @@ type Board = [Maybe Player]
 -- | Create an empty board
 --
 -- Examples:
--- >>> createEmptyBoard
+-- >>> createEmptyBoard 3
 -- [Nothing,Nothing,Nothing,Nothing,Nothing,Nothing,Nothing,Nothing,Nothing]
-createEmptyBoard :: Board
-createEmptyBoard = replicate 9 Nothing
+createEmptyBoard :: Int -> Board
+createEmptyBoard sizeOfBoard = replicate (sizeOfBoard * sizeOfBoard) Nothing
+
+-- | Get size of the board
+-- Examples:
+--
+-- >>> getBoardSize [Nothing,Nothing,Nothing,Nothing,Nothing,Nothing,Nothing,Nothing,Nothing]
+-- 3
+getBoardSize :: Board -> Int
+getBoardSize board = round (sqrt (fromIntegral (length board)))
 
 -- | Create a Player
 --
@@ -103,7 +111,7 @@ placePlayersMark board index player
 -- Nothing
 makeMove :: Board -> Move -> Player -> Maybe Board
 makeMove board move player = do
-  index <- translateCoords move (round (sqrt (fromIntegral (length board))))
+  index <- translateCoords move (getBoardSize board)
   placePlayersMark board index player
 
 -- | Get a sequence indices provided array containing the first, number of steps to take and direction
@@ -178,13 +186,31 @@ getPlayerPositions board player = elemIndices (Just player) board
 -- Examples:
 -- >>> elementsAreContainedIn [1,2,4] [1,2]
 -- False
--- >>> elementsAreContainedIn [1,5] [1,5,8]
+-- >>> elementsAreContainedIn [5,1] [1,5,8]
 -- True
 elementsAreContainedIn :: [Int] -> [Int] -> Bool
 elementsAreContainedIn [] _ = True
 elementsAreContainedIn sub list
   | head sub `elem` list = elementsAreContainedIn (tail sub) list
   | otherwise = False
+
+-- | Assessing if player is a winner
+-- TODO: test this
+isWinner :: Int -> Player -> Board -> Bool
+isWinner moveIndex player board =
+  any
+    ( \direction ->
+        do
+          let boardSize = getBoardSize board
+          elementsAreContainedIn
+            ( sequenceGenerator
+                [findCorner moveIndex boardSize direction]
+                boardSize
+                direction
+            )
+            (getPlayerPositions board player)
+    )
+    [Horizontal, Vertical, Diagonal, InverseDiagonal]
 
 -- createRandomMove :: Float -> Board -> Move
 -- createRandomMove seed board = do
