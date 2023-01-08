@@ -248,8 +248,3 @@ numifyMaybe (Just a) = a
 -- Player 'O'
 switchPlayers :: [Player] -> Player -> Player
 switchPlayers players currentPlayer = players !! mod (numifyMaybe (elemIndex currentPlayer players) + 1) (length players)
-
--- createRandomMove :: Float -> Board -> Move
--- createRandomMove seed board = do
---   let emptySquares = elemIndices Nothing board
---   emptySquares !! (seed - 1 / length emptySquares - 1)
