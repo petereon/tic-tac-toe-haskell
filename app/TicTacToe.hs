@@ -205,12 +205,12 @@ elementsAreContainedIn sub list
 -- | Assessing if player is a winner
 --
 -- Examples:
--- >>> isWinner 1 (Player 'X') [(Just (Player 'X')), (Just (Player 'X')), (Just (Player 'X')), Nothing, Nothing, Nothing, Nothing, Nothing, Nothing]
+-- >>> isPlayerWinner 1 (Player 'X') [(Just (Player 'X')), (Just (Player 'X')), (Just (Player 'X')), Nothing, Nothing, Nothing, Nothing, Nothing, Nothing]
 -- True
--- >>> isWinner 1 (Player 'X') [Nothing, (Just (Player 'X')), (Just (Player 'X')), Nothing, Nothing, Nothing, Nothing, Nothing, Nothing]
+-- >>> isPlayerWinner 1 (Player 'X') [Nothing, (Just (Player 'X')), (Just (Player 'X')), Nothing, Nothing, Nothing, Nothing, Nothing, Nothing]
 -- False
-isWinner :: Int -> Player -> Board -> Bool
-isWinner moveIndex player board =
+isPlayerWinner :: Int -> Player -> Board -> Bool
+isPlayerWinner moveIndex player board =
   any
     ( \direction ->
         do
@@ -248,3 +248,31 @@ numifyMaybe (Just a) = a
 -- Player 'O'
 switchPlayers :: [Player] -> Player -> Player
 switchPlayers players currentPlayer = players !! mod (numifyMaybe (elemIndex currentPlayer players) + 1) (length players)
+
+-- data GameState = GameState
+--   { boardState' :: Board,
+--     currentPlayer' :: Player,
+--     players' :: [Player],
+--     end' :: Bool,
+--     message' :: Maybe String
+--   }
+
+-- | Change game state
+--
+-- Examples:
+-- playOutRound (GameState {
+--    boardState' = (Board [Nothing,Nothing,Nothing,Nothing,Nothing,Nothing,Nothing,Nothing,Nothing]),
+--    currentPlayer' = (Player 'X'),
+--    players' = [(Player 'X'), (Player 'O')]
+--    end' = False,
+--    message' = Nothing}) (Move 1 1)
+playOutRound :: GameState -> Move -> GameState
+playOutRound gameState move = case makeMove (boardState' gameState) move (currentPlayer' gameState) of
+  Nothing -> gameState {message' = Just "Move not possible"}
+  Just boardState -> do
+    let gameWinner = -- I need to specify this here
+    gameState
+      { boardState' = boardState,
+        currentPlayer' = switchPlayers (players' gameState) (currentPlayer' gameState),
+        end' = gameWinner
+      }

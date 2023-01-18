@@ -1,8 +1,12 @@
 module Main where
 
-import TicTacToe
+-- import System.Random
+
+-- import TicTacToe
 
 main :: IO ()
 main = do
-  let emptyBoard = createEmptyBoard
-  print (emptyBoard 3)
+  print "jajaja"
+
+-- g <- getStdGen
+-- print (randomRs (1, 10) g :: [Int])
