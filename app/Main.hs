@@ -25,6 +25,3 @@ playRounds gameState = do
       y <- getLine
       putStrLn ""
       playRounds (playOutRound gameState (Move (read x) (read y)))
-
--- g <- getStdGen
--- print (randomRs (1, 10) g :: [Int])
