@@ -43,6 +43,16 @@ data GameState = GameState
 createEmptyBoard :: Int -> Board
 createEmptyBoard sizeOfBoard = replicate (sizeOfBoard * sizeOfBoard) Nothing
 
+initializeGame :: Int -> GameState
+initializeGame sizeOfBoard =
+  GameState
+    { boardState' = createEmptyBoard sizeOfBoard,
+      currentPlayer' = Player 'X',
+      players' = [Player 'X', Player 'O'],
+      end' = False,
+      message' = Nothing
+    }
+
 -- | Get size of the board
 -- Examples:
 --

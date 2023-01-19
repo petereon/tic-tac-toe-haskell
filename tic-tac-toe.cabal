@@ -70,8 +70,7 @@ executable tic-tac-toe
 
   -- Other library packages from which modules are imported.
   build-depends:
-    , base         ^>=4.16.3.0
-    , haskell-say  ^>=1.0.0.0
+    , base    ^>=4.16.3.0
     , random
 
   -- Directories containing source files.
