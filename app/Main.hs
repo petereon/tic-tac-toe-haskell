@@ -6,16 +6,25 @@ import TicTacToe
 
 main :: IO ()
 main = do
-  print "jajaja"
+  let newGame = initializeGame 3
+  _ <- playRounds newGame
+  return ()
 
-playRounds :: IO GameState -> IO GameState
-playRounds gameState' = do
-  -- Here I need to print the board along with some messages, going to need a function that prints a board nicely
-  print "Enter row"
-  x <- getLine
-  print "Enter column"
-  y <- getLine
-  gameState <- gameState'
+playRounds :: GameState -> IO GameState
+playRounds gameState = do
+  print (message' gameState)
+
+  if end' gameState
+    then return gameState
+    else do
+      putStrLn ("Current player: " ++ reprPlayer (currentPlayer' gameState))
+      print (boardState' gameState)
+      putStrLn "Enter row: "
+      x <- getLine
+      putStrLn "Enter column: "
+      y <- getLine
+      putStrLn ""
+      playRounds (playOutRound gameState (Move (read x) (read y)))
 
 -- g <- getStdGen
 -- print (randomRs (1, 10) g :: [Int])

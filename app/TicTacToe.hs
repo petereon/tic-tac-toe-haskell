@@ -219,7 +219,7 @@ elementsAreContainedIn sub list
 -- | Assessing if player is a winner
 --
 -- Examples:
--- >>> isPlayerWinner (Just 1) (Player 'X') [(Just (Player 'X')), (Just (Player 'X')), (Just (Player 'X')), Nothing, Nothing, Nothing, Nothing, Nothing, Nothing]
+-- >>> isPlayerWinner (Just 2) (Player 'X') [(Just (Player 'X')), (Just (Player 'X')), (Just (Player 'X')), Nothing, Nothing, Nothing, Nothing, Nothing, Nothing]
 -- True
 -- >>> isPlayerWinner (Just 1) (Player 'X') [Nothing, (Just (Player 'X')), (Just (Player 'X')), Nothing, Nothing, Nothing, Nothing, Nothing, Nothing]
 -- False
@@ -300,8 +300,9 @@ playOutRound :: GameState -> Move -> GameState
 playOutRound gameState move = case makeMove (boardState' gameState) move (currentPlayer' gameState) of
   Nothing -> gameState {message' = Just "Invalid move!"}
   Just boardState -> do
-    let playerWins = isPlayerWinner (translateCoords move (getBoardSize boardState)) (currentPlayer' gameState) (boardState' gameState)
-    let boardFull = isBoardFull (boardState' gameState)
+    let playerWins = isPlayerWinner (translateCoords move (getBoardSize boardState)) (currentPlayer' gameState) boardState
+    let boardFull = isBoardFull boardState
+
     gameState
       { boardState' = boardState,
         currentPlayer' = switchPlayers (players' gameState) (currentPlayer' gameState),
