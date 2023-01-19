@@ -281,7 +281,7 @@ getMessageFunction True _ = \player -> Just ("Winner: " ++ reprPlayer player)
 getMessageFunction _ True = const (Just "The game is a draw.")
 getMessageFunction _ _ = const Nothing
 
--- | Change game state
+-- | Play out a round changing a game state
 --
 -- Examples:
 -- >>> playOutRound (GameState {boardState' =  [Nothing,Nothing,Nothing,Nothing,Nothing,Nothing,Nothing,Nothing,Nothing], currentPlayer' = (Player 'X'), players' = [(Player 'X'), (Player 'O')], end' = False, message' = Nothing}) (Move 1 1)
