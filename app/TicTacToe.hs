@@ -8,6 +8,9 @@ data Direction = Vertical | Horizontal | Diagonal | InverseDiagonal
 
 newtype Player = Player Char deriving (Show)
 
+reprPlayer :: Player -> String
+reprPlayer (Player mark) = "Player " ++ [mark]
+
 instance Eq Player where
   (==) (Player x) (Player y) = (==) x y
 
@@ -30,6 +33,7 @@ data GameState = GameState
     end' :: Bool,
     message' :: Maybe String
   }
+  deriving (Show)
 
 -- | Create an empty board
 --
@@ -205,12 +209,13 @@ elementsAreContainedIn sub list
 -- | Assessing if player is a winner
 --
 -- Examples:
--- >>> isPlayerWinner 1 (Player 'X') [(Just (Player 'X')), (Just (Player 'X')), (Just (Player 'X')), Nothing, Nothing, Nothing, Nothing, Nothing, Nothing]
+-- >>> isPlayerWinner (Just 1) (Player 'X') [(Just (Player 'X')), (Just (Player 'X')), (Just (Player 'X')), Nothing, Nothing, Nothing, Nothing, Nothing, Nothing]
 -- True
--- >>> isPlayerWinner 1 (Player 'X') [Nothing, (Just (Player 'X')), (Just (Player 'X')), Nothing, Nothing, Nothing, Nothing, Nothing, Nothing]
+-- >>> isPlayerWinner (Just 1) (Player 'X') [Nothing, (Just (Player 'X')), (Just (Player 'X')), Nothing, Nothing, Nothing, Nothing, Nothing, Nothing]
 -- False
-isPlayerWinner :: Int -> Player -> Board -> Bool
-isPlayerWinner moveIndex player board =
+isPlayerWinner :: Maybe Int -> Player -> Board -> Bool
+isPlayerWinner Nothing _ _ = False
+isPlayerWinner (Just moveIndex) player board =
   any
     ( \direction ->
         do
@@ -224,6 +229,16 @@ isPlayerWinner moveIndex player board =
             (getPlayerPositions board player)
     )
     [Horizontal, Vertical, Diagonal, InverseDiagonal]
+
+-- | Test is board is full
+--
+-- Examples:
+-- >>> isBoardFull [Nothing, (Just (Player 'X')), (Just (Player 'X')), Nothing, Nothing, Nothing, Nothing, Nothing, Nothing]
+-- False
+-- >>> isBoardFull [(Just (Player 'X')), (Just (Player 'X')), (Just (Player 'X'))]
+-- True
+isBoardFull :: Board -> Bool
+isBoardFull board = Nothing `notElem` board
 
 -- | Convert Maybe to number
 --
@@ -249,30 +264,37 @@ numifyMaybe (Just a) = a
 switchPlayers :: [Player] -> Player -> Player
 switchPlayers players currentPlayer = players !! mod (numifyMaybe (elemIndex currentPlayer players) + 1) (length players)
 
--- data GameState = GameState
---   { boardState' :: Board,
---     currentPlayer' :: Player,
---     players' :: [Player],
---     end' :: Bool,
---     message' :: Maybe String
---   }
+-- | Get a message to show
+--
+-- Examples:
+--
+-- >>> getMessageFunction True False (Player 'X')
+-- Just "Winner: Player X"
+--
+-- >>> getMessageFunction False True (Player 'X')
+-- Just "The game is a draw."
+--
+-- >>> getMessageFunction False False (Player 'X')
+-- Nothing
+getMessageFunction :: Bool -> Bool -> (Player -> Maybe String)
+getMessageFunction True _ = \player -> Just ("Winner: " ++ reprPlayer player)
+getMessageFunction _ True = const (Just "The game is a draw.")
+getMessageFunction _ _ = const Nothing
 
 -- | Change game state
 --
 -- Examples:
--- playOutRound (GameState {
---    boardState' = (Board [Nothing,Nothing,Nothing,Nothing,Nothing,Nothing,Nothing,Nothing,Nothing]),
---    currentPlayer' = (Player 'X'),
---    players' = [(Player 'X'), (Player 'O')]
---    end' = False,
---    message' = Nothing}) (Move 1 1)
+-- >>> playOutRound (GameState {boardState' =  [Nothing,Nothing,Nothing,Nothing,Nothing,Nothing,Nothing,Nothing,Nothing], currentPlayer' = (Player 'X'), players' = [(Player 'X'), (Player 'O')], end' = False, message' = Nothing}) (Move 1 1)
+-- GameState {boardState' = [Just (Player 'X'),Nothing,Nothing,Nothing,Nothing,Nothing,Nothing,Nothing,Nothing], currentPlayer' = Player 'O', players' = [Player 'X',Player 'O'], end' = False, message' = Nothing}
 playOutRound :: GameState -> Move -> GameState
 playOutRound gameState move = case makeMove (boardState' gameState) move (currentPlayer' gameState) of
-  Nothing -> gameState {message' = Just "Move not possible"}
+  Nothing -> gameState {message' = Just "Invalid move!"}
   Just boardState -> do
-    let gameWinner = -- I need to specify this here
+    let playerWins = isPlayerWinner (translateCoords move (getBoardSize boardState)) (currentPlayer' gameState) (boardState' gameState)
+    let boardFull = isBoardFull (boardState' gameState)
     gameState
       { boardState' = boardState,
         currentPlayer' = switchPlayers (players' gameState) (currentPlayer' gameState),
-        end' = gameWinner
+        end' = playerWins || boardFull,
+        message' = getMessageFunction playerWins boardFull (currentPlayer' gameState)
       }
