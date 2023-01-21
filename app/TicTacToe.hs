@@ -1,6 +1,10 @@
+{-# LANGUAGE LambdaCase #-}
+
 module TicTacToe where
 
-import Data.List (elemIndex, elemIndices)
+import Data.List
+import Data.List.Split ()
+import Data.List.Split.Internals (chunksOf)
 import Data.Maybe (isNothing)
 
 -- import System.Random (randomRIO)
@@ -25,6 +29,30 @@ getY (Just (Move _ y)) = Just y
 getY Nothing = Nothing
 
 type Board = [Maybe Player]
+
+-- | Get string representation for a board
+--
+-- Examples:
+-- >>> reprBoard [Just (Player 'X'), Nothing, Just (Player 'O'), Just (Player 'Y'), Nothing, Just (Player 'Z'), Just (Player 'A'), Just (Player 'A'), Just (Player 'A')]
+-- " X  \9639  O \n Y  \9639  Z \n A  A  A \n"
+reprBoard :: Board -> String
+reprBoard board =
+  concatMap reprRow (chunksOf (getBoardSize board) board)
+
+-- | Get string representation for a row
+--
+-- Examples:
+-- >>> reprRow [Just (Player 'X'), Nothing, Just (Player 'O')]
+-- " X  \9639  O \n"
+reprRow :: [Maybe Player] -> String
+reprRow row =
+  concatMap
+    ( \case
+        Nothing -> " ▧ "
+        Just (Player char) -> [' ', char, ' ']
+    )
+    row
+    ++ "\n"
 
 data GameState = GameState
   { boardState' :: Board,
@@ -290,6 +318,17 @@ getMessageFunction :: Bool -> Bool -> (Player -> Maybe String)
 getMessageFunction True _ = \player -> Just ("Winner: " ++ reprPlayer player)
 getMessageFunction _ True = const (Just "The game is a draw.")
 getMessageFunction _ _ = const Nothing
+
+-- | Get string representation of a message
+--
+-- Examples:
+-- >>> reprMessage Nothing
+-- ""
+-- >>> reprMessage (Just "Some message")
+-- "Some message"
+reprMessage :: Maybe String -> String
+reprMessage Nothing = ""
+reprMessage (Just msg) = msg
 
 -- | Play out a round changing a game state
 --

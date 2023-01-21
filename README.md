@@ -6,7 +6,7 @@
 - [x] Read-up on Haskell linting
 - [x] Read-up on testing in Haskell
 - [ ] Find how to control development dependencies in .cabal 
-- [ ] Find out how to handle randomness properly in Haskell (IO Monads?)
+- [x] Find out how to handle randomness properly in Haskell (IO Monads?)
 - [x] Research if I can compose functions instead of using the disgusting assignments (thread first macros or such?)
 - [x] Read up on [invertibility of Haskell functions](https://www-ps.informatik.uni-kiel.de/~fte/papers/Haskell-1.pdf)
 

@@ -12,13 +12,13 @@ main = do
 
 playRounds :: GameState -> IO GameState
 playRounds gameState = do
-  print (message' gameState)
+  putStrLn (reprMessage (message' gameState))
 
   if end' gameState
     then return gameState
     else do
       putStrLn ("Current player: " ++ reprPlayer (currentPlayer' gameState))
-      print (boardState' gameState)
+      putStrLn (reprBoard (boardState' gameState))
       putStrLn "Enter row: "
       x <- getLine
       putStrLn "Enter column: "
