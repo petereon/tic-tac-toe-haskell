@@ -71,12 +71,13 @@ data GameState = GameState
 createEmptyBoard :: Int -> Board
 createEmptyBoard sizeOfBoard = replicate (sizeOfBoard * sizeOfBoard) Nothing
 
-initializeGame :: Int -> GameState
-initializeGame sizeOfBoard =
+initializeGame :: Int -> Int -> GameState
+initializeGame sizeOfBoard numberOfPlayers = do
+  let players = take numberOfPlayers ['A' .. 'Z']
   GameState
     { boardState' = createEmptyBoard sizeOfBoard,
-      currentPlayer' = Player 'X',
-      players' = [Player 'X', Player 'O'],
+      currentPlayer' = Player (head players),
+      players' = map Player players,
       end' = False,
       message' = Nothing
     }
