@@ -88,7 +88,7 @@ initializeGame sizeOfBoard numberOfPlayers = do
 -- >>> getBoardSize [Nothing,Nothing,Nothing,Nothing,Nothing,Nothing,Nothing,Nothing,Nothing]
 -- 3
 getBoardSize :: Board -> Int
-getBoardSize board = round (sqrt (fromIntegral (length board)))
+getBoardSize board = round (sqrt (fromIntegral (length board)) :: Double)
 
 -- | Create a Player
 --
