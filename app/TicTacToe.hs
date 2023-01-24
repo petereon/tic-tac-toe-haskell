@@ -90,17 +90,6 @@ initializeGame sizeOfBoard numberOfPlayers = do
 getBoardSize :: Board -> Int
 getBoardSize board = round (sqrt (fromIntegral (length board)) :: Double)
 
--- | Create a Player
---
--- Examples:
--- >>> createPlayer 'X'
--- Player 'X'
---
--- >>> createPlayer 'O'
--- Player 'O'
-createPlayer :: Char -> Player
-createPlayer = Player
-
 -- | Translate coords from points to index
 --
 -- Examples:
