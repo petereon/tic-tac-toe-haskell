@@ -269,29 +269,6 @@ isPlayerWinner (Just moveIndex) player board =
     )
     [Horizontal, Vertical, Diagonal, InverseDiagonal]
 
--- | Test is board is full
---
--- Examples:
--- >>> isBoardFull [Nothing, (Just (Player 'X')), (Just (Player 'X')), Nothing, Nothing, Nothing, Nothing, Nothing, Nothing]
--- False
--- >>> isBoardFull [(Just (Player 'X')), (Just (Player 'X')), (Just (Player 'X'))]
--- True
-isBoardFull :: Board -> Bool
-isBoardFull board = Nothing `notElem` board
-
--- | Convert Maybe to number
---
--- Examples:
---
--- >>> numifyMaybe (Just 5)
--- 5
---
--- >>> numifyMaybe Nothing
--- -1
-numifyMaybe :: Maybe Int -> Int
-numifyMaybe Nothing = -1
-numifyMaybe (Just a) = a
-
 -- | Switch players to the next one, supports more than 2
 --
 -- Examples:
@@ -301,7 +278,16 @@ numifyMaybe (Just a) = a
 -- >>> switchPlayers [(Player 'X'), (Player 'O')] (Player 'X')
 -- Player 'O'
 switchPlayers :: [Player] -> Player -> Player
-switchPlayers players currentPlayer = players !! mod (numifyMaybe (elemIndex currentPlayer players) + 1) (length players)
+switchPlayers players currentPlayer =
+  players
+    !! mod
+      ( ( case elemIndex currentPlayer players of
+            Nothing -> -1
+            Just val -> val
+        )
+          + 1
+      )
+      (length players)
 
 -- | Get a message to show
 --
@@ -341,7 +327,7 @@ playOutRound gameState move = case makeMove (boardState' gameState) move (curren
   Nothing -> gameState {message' = Just "Invalid move!"}
   Just boardState -> do
     let playerWins = isPlayerWinner (translateCoords move (getBoardSize boardState)) (currentPlayer' gameState) boardState
-    let boardFull = isBoardFull boardState
+    let boardFull = Nothing `notElem` boardState
 
     gameState
       { boardState' = boardState,
