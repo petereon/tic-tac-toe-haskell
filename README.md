@@ -13,3 +13,20 @@
 
 Notes:
 - `stylish-haskell` feels like it's not doing much - not too suitable for learners without a faintest idea on how to style Haskell
+
+## Run
+
+Game can be ran using
+```
+cabal run
+```
+
+- code is fromatted and linted using `ormolu`, `hlint` and `cabal-fmt`
+- code is tested using `doctest`
+
+There is config for steel-overseer in form of [`.watcherLint`](./.watcherLint) and [`.watcherTest`](./.watcherTest) which can be run using
+```
+sos --rcfile .watcherLint
+# and
+sos --rcfile .watcherTest
+```
