@@ -241,6 +241,8 @@ elementsAreContainedIn sub list
 -- True
 -- >>> isPlayerWinner (Just 1) (Player 'X') [Nothing, (Just (Player 'X')), (Just (Player 'X')), Nothing, Nothing, Nothing, Nothing, Nothing, Nothing]
 -- False
+-- >>> isPlayerWinner (Just 1) (Player 'X') [Nothing, (Just (Player 'X')), Nothing, Nothing, (Just (Player 'X')), Nothing, Nothing, (Just (Player 'X')), Nothing]
+-- True
 isPlayerWinner :: Maybe Int -> Player -> Board -> Bool
 isPlayerWinner Nothing _ _ = False
 isPlayerWinner (Just moveIndex) player board =
